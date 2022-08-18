@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 
+import Ecommerce from "./Ecommerce";
+import Campaigns from "./Campaigns";
+import Messages from "./Messages";
+import Tasks from "./Tasks";
+import Inbox from "./Inbox";
+import Calendar from "./Calendar";
+import ExpandBtn from "./ExpandBtn";
+
 interface IOpen {
   sidebarOpen: boolean;
   setSidebarOpen?: boolean | any;
@@ -13,54 +21,60 @@ function Sidebar({ sidebarOpen, setSidebarOpen }: IOpen) {
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
 
-  const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
-  const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
-  );
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+
+  /////////////////////
+  // const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
+  // const [sidebarExpanded, setSidebarExpanded] = useState(
+  //   storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
+  // );
 
   // close on click outside
-  useEffect(() => {
-    const clickHandler = ({ target }: any) => {
-      if (!sidebar.current || !trigger.current) return;
-      if (
-        !sidebarOpen ||
-        sidebar.current.contains(target) ||
-        trigger.current.contains(target)
-      )
-        return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
-  });
+  // useEffect(() => {
+  //   const clickHandler = ({ target }: any) => {
+  //     if (!sidebar.current || !trigger.current) return;
+  //     if (
+  //       !sidebarOpen ||
+  //       sidebar.current.contains(target) ||
+  //       trigger.current.contains(target)
+  //     )
+  //       return;
+  //     setSidebarOpen(false);
+  //   };
+  //   document.addEventListener("click", clickHandler);
+  //   return () => document.removeEventListener("click", clickHandler);
+  // });
 
-  useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
-    if (sidebarExpanded) {
-      document.querySelector("body")?.classList.add("sidebar-expanded");
-    } else {
-      document.querySelector("body")?.classList.remove("sidebar-expanded");
-    }
-  }, [sidebarExpanded]);
+  // useEffect(() => {
+  //   localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
+  //   if (sidebarExpanded) {
+  //     document.querySelector("body")?.classList.add("sidebar-expanded");
+  //   } else {
+  //     document.querySelector("body")?.classList.remove("sidebar-expanded");
+  //   }
+  // }, [sidebarExpanded]);
+  ///////////////////////////
 
   return (
     <div>
       {/* sidebar */}
       <div
         id="sidebar"
-        ref={sidebar}
-        className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 transform h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-64"
+        // ref={sidebar}
+        className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 transform h-screen overflow-y-scroll  lg:overflow-y-auto no-scrollbar lg:${
+          sidebarExpanded ? "w-64 2xl " : "w-20"
+        } shrink-0 bg-slate-800 p-4 transition-all duration-700 ease-in-out ${
+          sidebarExpanded ? "-translate-x-64" : "translate-x-0"
         }`}
       >
         {/* sidebar header */}
         <div className="flex justify-between mb-10 pr-3 sm:px-2">
           <button
-            ref={trigger}
+            // ref={trigger}
             className="lg:hidden text-slate-500 hover:text-slate-400"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-controls="sidebar"
-            aria-expanded={sidebarOpen}
+            onClick={() => setSidebarExpanded(!sidebarExpanded)}
+            // aria-controls="sidebar"
+            // aria-expanded={sidebarOpen}
           >
             <span className="sr-only">Close sidebar</span>
             <svg
@@ -117,12 +131,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }: IOpen) {
           <div>
             <h3 className="text-xs uppercase text-slate-500 font-semibold pl-3">
               <span
-                className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-                aria-hidden="true"
+                className={`lg:${
+                  sidebarExpanded && "hidden"
+                } 2xl:hidden text-center w-6`}
+                // aria-hidden="true"
               >
                 •••
               </span>
-              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">
+              <span className={`hidden lg:${sidebarExpanded && "block"}`}>
                 Pages
               </span>
             </h3>
@@ -132,17 +148,63 @@ function Sidebar({ sidebarOpen, setSidebarOpen }: IOpen) {
                 className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${
                   pathname === "/" && "bg-slate-900"
                 }`}
-              ></li>
+              >
+                <Link
+                  to="/"
+                  className={`block text-slate-200 hover:teTasksxt-white truncate transition duration-150 ${
+                    pathname === "/" && "hover:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <svg className="shrink-0 h-6 w-6" viewBox="0 0 24 24">
+                      <path
+                        className={`fill-current text-slate-400 ${
+                          pathname === "/" && "!text-indigo-500"
+                        }`}
+                        d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0z"
+                      />
+                      <path
+                        className={`fill-current text-slate-600 ${
+                          pathname === "/" && "text-indigo-600"
+                        }`}
+                        d="M12 3c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9z"
+                      />
+                      <path
+                        className={`fill-current text-slate-400 ${
+                          pathname === "/" && "text-indigo-200"
+                        }`}
+                        d="M12 15c-1.654 0-3-1.346-3-3 0-.462.113-.894.3-1.285L6 6l4.714 3.301A2.973 2.973 0 0112 9c1.654 0 3 1.346 3 3s-1.346 3-3 3z"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium ml-3 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                      Dashboard
+                    </span>
+                  </div>
+                </Link>
+              </li>
+              {/* Ecommerce */}
+              <Ecommerce
+                sidebarExpanded={sidebarExpanded}
+                setSidebarExpanded={setSidebarExpanded}
+              />
+              <Campaigns />
+              <Messages />
+              <Tasks />
+              <Inbox toggle={sidebarExpanded} />
+              <Calendar />
             </ul>
           </div>
         </div>
         {/* Expand / collapse button */}
+        {/* <ExpandBtn /> */}
         <div className="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">
           <div className="px-3 py-2">
             <button onClick={() => setSidebarExpanded(!sidebarExpanded)}>
               <span className="sr-only">Expand / collapse sidebar</span>
               <svg
-                className="w-6 h-6 fill-current sidebar-expanded:rotate-180"
+                className={`w-6 h-6 fill-current transition-all duration-700 ${
+                  sidebarExpanded && "rotate-180"
+                }`}
                 viewBox="0 0 24 24"
               >
                 <path
